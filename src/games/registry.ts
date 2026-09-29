@@ -1,5 +1,7 @@
 import type { DeckCount } from '../core/cards';
 import type { PlayerLimits } from '../core/players';
+import { pvLimits } from './preto-vermelho/game';
+import { mountPretoVermelho } from './preto-vermelho/view';
 import { mountSueca } from './sueca/view';
 import { SUECA_LIMITS } from './sueca/sueca';
 
@@ -28,5 +30,12 @@ export const GAMES: GameDef[] = [
     description: 'Cada carta tirada tem uma regra. Passa a vez no sentido horário.',
     limits: () => SUECA_LIMITS,
     mount: mountSueca,
+  },
+  {
+    id: 'preto-vermelho',
+    name: 'Preto ou Vermelho',
+    description: '4 rodadas de palpites e o Céu e Inferno no final.',
+    limits: pvLimits,
+    mount: mountPretoVermelho,
   },
 ];
