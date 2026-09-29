@@ -16,6 +16,7 @@
 }
 
 * { box-sizing: border-box; }
+button { touch-action: manipulation; }
 html, body { margin: 0; }
 body {
   min-height: 100dvh;
@@ -49,10 +50,10 @@ h1, h2, h3 { margin: 0; }
 .btn:disabled { opacity: 0.4; cursor: default; }
 .btn-primary { background: var(--gold); color: var(--gold-ink); }
 .btn-big { font-size: 1.2rem; padding: 16px; width: 100%; }
-.btn-ghost { background: none; border: none; color: var(--muted); font: inherit; cursor: pointer; padding: 8px 0; }
+.btn-ghost { background: none; border: none; color: var(--muted); font: inherit; cursor: pointer; padding: 8px 0; min-height: 44px; }
 .btn-icon {
   background: rgba(255, 255, 255, 0.12); border: none; color: var(--ink);
-  width: 36px; height: 36px; border-radius: 10px; font-size: 1rem; cursor: pointer;
+  width: 44px; height: 44px; border-radius: 10px; font-size: 1rem; cursor: pointer;
 }
 .btn-icon:disabled { opacity: 0.3; cursor: default; }
 
@@ -64,7 +65,7 @@ h1, h2, h3 { margin: 0; }
 .add-player { display: flex; gap: 8px; }
 .add-player input { flex: 1; min-width: 0; font: inherit; padding: 12px; border-radius: var(--radius); border: none; }
 .player-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
-.player-row { display: flex; align-items: center; gap: 6px; }
+.player-row { display: flex; align-items: center; gap: 8px; }
 .player-row > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.1rem; }
 .deck-toggle { display: flex; align-items: center; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .chip {
@@ -99,8 +100,8 @@ h1, h2, h3 { margin: 0; }
 .card-small.card-back { border-width: 3px; }
 .flip-in { animation: flip-in 0.45s ease-out; }
 @keyframes flip-in {
-  from { transform: rotateY(90deg); }
-  to { transform: rotateY(0); }
+  from { transform: perspective(600px) rotateY(90deg); }
+  to { transform: perspective(600px) rotateY(0); }
 }
 
 .rule { background: rgba(0, 0, 0, 0.25); border-radius: var(--radius); padding: 16px; text-align: center; }

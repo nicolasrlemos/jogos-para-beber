@@ -18,6 +18,11 @@ Jogos de baralho para beber em roda, num aparelho só no centro da mesa.
 ## Adicionar um jogo
 
 Crie `src/games/<id>/` com a lógica pura (testada em `tests/`) e um `view.ts`
-exportando `mount(root, config, ctx)`, e registre em `src/games/registry.ts`.
+que exporte a função de montagem (ex.: `mountSueca(root, config, ctx)`). Depois
+adicione uma entrada `GameDef` em `src/games/registry.ts` com `id`, `name`,
+`description`, `limits(deckCount)` e `mount(root, config, ctx)`.
+
+O `vite.config.ts` usa `base: './'`, então o `dist/` funciona a partir de
+qualquer subpasta.
 
 Beba com responsabilidade.

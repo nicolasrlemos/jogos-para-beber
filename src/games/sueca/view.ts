@@ -2,6 +2,7 @@ import { rankLabel } from '../../core/cards';
 import { renderCard } from '../../ui/card';
 import { mountEnd } from '../../ui/end';
 import { escapeHtml } from '../../ui/html';
+import { createTapGuard } from '../../ui/tap-guard';
 import { bindTopbar, renderTopbar } from '../../ui/topbar';
 import type { GameConfig, GameContext } from '../registry';
 import { SUECA_RULES } from './rules';
@@ -9,10 +10,12 @@ import { createSueca, currentPlayer, isSuecaOver, nextTurn, revealCard } from '.
 
 export function mountSueca(root: HTMLElement, config: GameConfig, ctx: GameContext): void {
   let state = createSueca(config.players, config.deckCount);
+  const tap = createTapGuard();
 
   function render(): void {
     if (isSuecaOver(state)) {
       mountEnd(root, 'Fim do baralho', 'Todas as cartas foram tiradas.', ctx);
+      tap.lock();
       return;
     }
     const card = state.revealed;
@@ -28,7 +31,7 @@ export function mountSueca(root: HTMLElement, config: GameConfig, ctx: GameConte
               ? renderCard(card, { flip: true })
               : `<button class="pile" data-action="reveal" aria-label="Tirar carta">${renderCard(null)}</button>`
           }
-          <p class="pile-count">${state.pile.length} cartas no monte</p>
+          <p class="pile-count">${state.pile.length} ${state.pile.length === 1 ? 'carta' : 'cartas'} no monte</p>
         </div>
         ${
           card && rule
@@ -44,20 +47,19 @@ export function mountSueca(root: HTMLElement, config: GameConfig, ctx: GameConte
     bindTopbar(root, ctx.onExit);
     root.querySelector('[data-action="reveal"]')?.addEventListener(
       'click',
-      () => {
+      tap.guard(() => {
         state = revealCard(state);
         render();
-      },
-      { once: true },
+      }),
     );
     root.querySelector('[data-action="next"]')?.addEventListener(
       'click',
-      () => {
+      tap.guard(() => {
         state = nextTurn(state);
         render();
-      },
-      { once: true },
+      }),
     );
+    tap.lock();
   }
 
   render();

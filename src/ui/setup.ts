@@ -18,7 +18,7 @@ export function mountSetup(
   let deckCount: DeckCount = initial.deckCount;
   let error: string | null = null;
 
-  function render(focusInput = false): void {
+  function render(focusInput = false, draft = ''): void {
     const limits = game.limits(deckCount);
     const limitText = Number.isFinite(limits.max)
       ? `${limits.min} a ${limits.max} jogadores`
@@ -58,6 +58,7 @@ export function mountSetup(
       </main>`;
 
     const input = root.querySelector<HTMLInputElement>('input[name="name"]')!;
+    input.value = draft;
     if (focusInput) input.focus();
     root.querySelector('form')!.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -74,7 +75,10 @@ export function mountSetup(
 
   function handle(btn: HTMLButtonElement): void {
     const i = Number(btn.dataset.index);
-    switch (btn.dataset.action) {
+    const action = btn.dataset.action;
+    const draft = root.querySelector<HTMLInputElement>('input[name="name"]')!.value.trim();
+    if (action !== 'start') error = null;
+    switch (action) {
       case 'back':
         handlers.onBack();
         return;
@@ -91,6 +95,7 @@ export function mountSetup(
         deckCount = Number(btn.dataset.count) as DeckCount;
         break;
       case 'start':
+        if (draft) players.push(draft);
         error = validatePlayers(players, game.limits(deckCount), deckCount);
         if (!error) {
           handlers.onStart({ players: players.map((p) => p.trim()), deckCount });
@@ -98,7 +103,7 @@ export function mountSetup(
         }
         break;
     }
-    render();
+    render(false, action === 'start' ? '' : draft);
   }
 
   render();

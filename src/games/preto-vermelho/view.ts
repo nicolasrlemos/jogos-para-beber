@@ -2,6 +2,7 @@ import { rankLabel } from '../../core/cards';
 import { renderCard } from '../../ui/card';
 import { mountEnd } from '../../ui/end';
 import { escapeHtml } from '../../ui/html';
+import { createTapGuard } from '../../ui/tap-guard';
 import { bindTopbar, renderTopbar } from '../../ui/topbar';
 import type { GameConfig, GameContext } from '../registry';
 import { matchesForSlot, REVEAL_ORDER, slotName, type PyramidSlot, type SlotKind } from './ceu-inferno';
@@ -13,6 +14,7 @@ import { formatSips, GUESS_OPTIONS, ROUND_NAMES, sipsForRound, type Guess, type 
 
 export function mountPretoVermelho(root: HTMLElement, config: GameConfig, ctx: GameContext): void {
   let state: PvState = createPretoVermelho(config.players, config.deckCount);
+  const tap = createTapGuard();
 
   function update(next: PvState): void {
     state = next;
@@ -32,6 +34,7 @@ export function mountPretoVermelho(root: HTMLElement, config: GameConfig, ctx: G
         mountEnd(root, 'Fim de jogo', 'Céu e Inferno concluídos.', ctx);
         break;
     }
+    tap.lock();
   }
 
   function renderGuessRound(): void {
@@ -66,12 +69,12 @@ export function mountPretoVermelho(root: HTMLElement, config: GameConfig, ctx: G
     bindTopbar(root, ctx.onExit);
     const guessButtons = root.querySelectorAll<HTMLButtonElement>('[data-guess]');
     guessButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', tap.guard(() => {
         guessButtons.forEach((b) => (b.disabled = true));
         update(submitGuess(state, btn.dataset.guess as Guess));
-      });
+      }));
     });
-    root.querySelector('[data-action="next"]')?.addEventListener('click', () => update(advance(state)), { once: true });
+    root.querySelector('[data-action="next"]')?.addEventListener('click', tap.guard(() => update(advance(state))));
   }
 
   function renderSlot(kind: SlotKind, level: number): string {
@@ -141,8 +144,8 @@ export function mountPretoVermelho(root: HTMLElement, config: GameConfig, ctx: G
       </main>`;
 
     bindTopbar(root, ctx.onExit);
-    root.querySelector('[data-action="reveal"]')?.addEventListener('click', () => update(revealNextSlot(state)), { once: true });
-    root.querySelector('[data-action="finish"]')?.addEventListener('click', () => update(finishGame(state)), { once: true });
+    root.querySelector('[data-action="reveal"]')?.addEventListener('click', tap.guard(() => update(revealNextSlot(state))));
+    root.querySelector('[data-action="finish"]')?.addEventListener('click', tap.guard(() => update(finishGame(state))));
   }
 
   render();
