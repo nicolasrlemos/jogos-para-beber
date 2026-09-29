@@ -15,6 +15,11 @@ Jogos de baralho para beber em roda, num aparelho só no centro da mesa.
     npm test
     npm run build   # gera dist/ estático
 
+## Deploy
+
+Cada push na `main` roda testes, build e publica no GitHub Pages
+(`.github/workflows/deploy.yml`): https://nicolasrlemos.github.io/jogos-para-beber/
+
 ## Adicionar um jogo
 
 Crie `src/games/<id>/` com a lógica pura (testada em `tests/`) e um `view.ts`
